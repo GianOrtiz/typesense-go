@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	collectionCfg = CollectionConfig{
+	testCollectionCfg = CollectionConfig{
 		Name: "companies",
 		Fields: []CollectionField{
 			CollectionField{
@@ -20,8 +20,8 @@ var (
 			},
 		},
 	}
-	collection = Collection{
-		collectionCfg,
+	testCollection = Collection{
+		testCollectionCfg,
 		0,
 		0,
 	}
@@ -29,7 +29,7 @@ var (
 
 func TestCreateCollection(t *testing.T) {
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
-		collectionData, _ := json.Marshal(collection)
+		collectionData, _ := json.Marshal(testCollection)
 		return &http.Response{
 			StatusCode: http.StatusOK,
 			Body:       ioutil.NopCloser(bytes.NewReader(collectionData)),
@@ -39,7 +39,7 @@ func TestCreateCollection(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	collectionResp, err := client.CreateCollection(collectionCfg)
+	collectionResp, err := client.CreateCollection(testCollectionCfg)
 	if err != nil {
 		t.Errorf("Expected to receive no errors, received %v", err)
 	}
@@ -60,7 +60,7 @@ func TestCreateCollection_conflict(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	_, err := client.CreateCollection(collectionCfg)
+	_, err := client.CreateCollection(testCollectionCfg)
 	if err == nil || err.Error() != errorMessage {
 		t.Errorf("Expected to receive error message %q, received error %v", errorMessage, err)
 	}
