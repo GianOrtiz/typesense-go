@@ -26,6 +26,11 @@ type Node struct {
 	APIKey   string `json:"apiKey"`
 }
 
+// APIResponse is the default api response with a message.
+type APIResponse struct {
+	Message string `json:"message"`
+}
+
 // NewClient configures and returns a new Typesense client.
 func NewClient(masterNode *Node, timeoutSeconds int, replicaNodes ...*Node) (*Client, error) {
 	var readReplicas []*Node
