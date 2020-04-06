@@ -1,4 +1,4 @@
-package main
+package typesense
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	testCollectionCfg = CollectionConfig{
+	testCollectionSchema = CollectionSchema{
 		Name: "companies",
 		Fields: []CollectionField{
 			CollectionField{
@@ -21,7 +21,7 @@ var (
 		},
 	}
 	testCollection = Collection{
-		testCollectionCfg,
+		testCollectionSchema,
 		0,
 		0,
 	}
@@ -39,7 +39,7 @@ func TestCreateCollection(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	collectionResp, err := client.CreateCollection(testCollectionCfg)
+	collectionResp, err := client.CreateCollection(testCollectionSchema)
 	if err != nil {
 		t.Errorf("Expected to receive no errors, received %v", err)
 	}
@@ -60,7 +60,7 @@ func TestCreateCollection_conflict(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	_, err := client.CreateCollection(testCollectionCfg)
+	_, err := client.CreateCollection(testCollectionSchema)
 	if err == nil || err.Error() != errorMessage {
 		t.Errorf("Expected to receive error message %q, received error %v", errorMessage, err)
 	}
