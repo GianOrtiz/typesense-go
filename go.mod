@@ -1,3 +1,3 @@
-module github.com/GianOrtiz/typesense
+module github.com/GianOrtiz/typesense-go
 
 go 1.14

@@ -1,4 +1,4 @@
-package main
+package typesense
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/GianOrtiz/typesense/mock"
+	"github.com/GianOrtiz/typesense-go/mock"
 )
 
 var (

@@ -1,4 +1,4 @@
-package main
+package typesense
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 )
+
+const defaultHeaderKey = "X-TYPESENSE-API-KEY"
 
 type httpClient interface {
 	Do(r *http.Request) (*http.Response, error)

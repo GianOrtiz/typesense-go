@@ -1,4 +1,4 @@
-package main
+package typesense
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ func TestRetrieveCollection(t *testing.T) {
 		collectionJSON, _ := json.Marshal(&testCollection)
 		return &http.Response{
 			StatusCode: http.StatusOK,
-			Body: ioutil.NopCloser(bytes.NewReader(collectionJSON)),
+			Body:       ioutil.NopCloser(bytes.NewReader(collectionJSON)),
 		}, nil
 	}
 	client := Client{
@@ -35,7 +35,7 @@ func TestRetrieveCollection_notFound(t *testing.T) {
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: http.StatusNotFound,
-			Body: ioutil.NopCloser(strings.NewReader(`{"json": "collection not found"}`)),
+			Body:       ioutil.NopCloser(strings.NewReader(`{"json": "collection not found"}`)),
 		}, nil
 	}
 	client := Client{
@@ -53,7 +53,7 @@ func TestDeleteCollection(t *testing.T) {
 		collectionJSON, _ := json.Marshal(&testCollection)
 		return &http.Response{
 			StatusCode: http.StatusOK,
-			Body: ioutil.NopCloser(bytes.NewReader(collectionJSON)),
+			Body:       ioutil.NopCloser(bytes.NewReader(collectionJSON)),
 		}, nil
 	}
 	client := Client{
@@ -73,7 +73,7 @@ func TestDeleteCollection_notFound(t *testing.T) {
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: http.StatusNotFound,
-			Body: ioutil.NopCloser(strings.NewReader(`{"json": "collection not found"}`)),
+			Body:       ioutil.NopCloser(strings.NewReader(`{"json": "collection not found"}`)),
 		}, nil
 	}
 	client := Client{

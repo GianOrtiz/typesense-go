@@ -1,4 +1,4 @@
-package main
+package typesense
 
 import (
 	"bytes"
@@ -10,8 +10,8 @@ import (
 
 const collectionsEndpoint = "collections"
 
-// CollectionConfig is the collection model of typesense.
-type CollectionConfig struct {
+// CollectionSchema is the collection model of typesense.
+type CollectionSchema struct {
 	Name                string            `json:"name"`
 	Fields              []CollectionField `json:"fields"`
 	DefaultSortingField string            `json:"default_sorting_field"`
@@ -19,7 +19,7 @@ type CollectionConfig struct {
 
 // Collection is the model of a collection in typesense.
 type Collection struct {
-	CollectionConfig
+	CollectionSchema
 	NumDocuments int   `json:"num_documents"`
 	CreatedAt    int64 `json:"created_at"`
 }
@@ -33,7 +33,7 @@ type CollectionField struct {
 }
 
 // CreateCollection creates a new collection.
-func (c *Client) CreateCollection(collectionCfg CollectionConfig) (*Collection, error) {
+func (c *Client) CreateCollection(collectionCfg CollectionSchema) (*Collection, error) {
 	method := http.MethodPost
 	url := fmt.Sprintf(
 		"%s://%s:%s/%s",
