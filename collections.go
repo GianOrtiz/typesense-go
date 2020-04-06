@@ -6,16 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 )
 
-const collectionsEndpoint = "/collections"
+const collectionsEndpoint = "collections"
 
 // CollectionConfig is the collection model of typesense.
 type CollectionConfig struct {
 	Name                string            `json:"name"`
 	Fields              []CollectionField `json:"fields"`
-	DefaultSortingField string            `json:"default_sorting_fields,omitempty"`
+	DefaultSortingField string            `json:"default_sorting_field"`
 }
 
 // Collection is the model of a collection in typesense.
@@ -43,12 +42,7 @@ func (c *Client) CreateCollection(collectionCfg CollectionConfig) (*Collection, 
 		c.masterNode.Port,
 		collectionsEndpoint,
 	)
-	collection := Collection{
-		collectionCfg,
-		0,
-		time.Now().Unix(),
-	}
-	collectionJSON, _ := json.Marshal(collection)
+	collectionJSON, _ := json.Marshal(collectionCfg)
 	req, _ := http.NewRequest(method, url, bytes.NewReader(collectionJSON))
 	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
 	resp, err := c.httpClient.Do(req)
@@ -56,7 +50,7 @@ func (c *Client) CreateCollection(collectionCfg CollectionConfig) (*Collection, 
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == http.StatusConflict {
+	if resp.StatusCode == http.StatusConflict || resp.StatusCode == http.StatusBadRequest {
 		var apiResponse APIResponse
 		if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 			return nil, err
