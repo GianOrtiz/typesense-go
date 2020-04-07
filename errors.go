@@ -2,9 +2,11 @@ package typesense
 
 import "errors"
 
-// ErrConnNotReady is returned when we can't establish a connection
-// with the typesense node.
+// ErrConnNotReady means the connection with the Typesense API
+// could not be established, it can be because of a connection
+// timeout, a unauthorized response or a fail.
 var ErrConnNotReady = errors.New("typesense connection is not ready")
 
-// ErrCollectionNotFound is used when the typesense can't find the collection.
+// ErrCollectionNotFound means Typesense does not have this collection
+// registered in it.
 var ErrCollectionNotFound = errors.New("collection was not found")

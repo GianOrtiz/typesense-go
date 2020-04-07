@@ -11,14 +11,14 @@ import (
 	"strconv"
 )
 
-// SearchResponse is the response for a search.
+// SearchResponse is the default Typesense response for a serch.
 type SearchResponse struct {
 	FacetCounts []FacetCount      `json:"facet_counts"`
 	Found       int               `json:"found"`
 	Hits        []SearchResultHit `json:"hits"`
 }
 
-// FacetCount is the representation of a typesense facet count.
+// FacetCount is the representation of a Typesense facet count.
 type FacetCount struct {
 	FieldName string `json:"field_name"`
 	Counts    []struct {
@@ -27,7 +27,8 @@ type FacetCount struct {
 	} `json:"counts"`
 }
 
-// SearchResultHit represents a typesense search result hit.
+// SearchResultHit represents a Typesense search result hit. Every
+// retrieved document from a search will have the type map[string]interface{}.
 type SearchResultHit struct {
 	Highlights []SearchHighlight      `json:"highlights"`
 	Document   map[string]interface{} `json:"document"`
@@ -42,7 +43,8 @@ type SearchHighlight struct {
 	Indices  []int    `json:"indices"`
 }
 
-// SearchOptions is the options to make a search.
+// SearchOptions is all options that will be used to create
+// a form url encoded to search in Typesense.
 type SearchOptions struct {
 	Query               string
 	QueryBy             string
@@ -190,7 +192,8 @@ func (c *Client) DeleteDocument(collectionName, documentID string) *DocumentResp
 	return &documentResponse
 }
 
-// Search searches for documents using the search options.
+// Search searches for the query using the queryBy argument
+// and other options in searchOptions in the Typesense API.
 func (c *Client) Search(collectionName, query, queryBy string, searchOptions *SearchOptions) (*SearchResponse, error) {
 	urlEncodedForm := fmt.Sprintf("q=%s&query_by=%s", query, queryBy)
 	var err error

@@ -13,14 +13,14 @@ type httpClient interface {
 	Do(r *http.Request) (*http.Response, error)
 }
 
-// Client is the client contract for the typesense API.
+// Client is the client to communicate with the Typesense API.
 type Client struct {
 	httpClient       httpClient
 	masterNode       *Node
 	readReplicaNodes []*Node
 }
 
-// Node is the type representing a typesense node.
+// Node is a Typesense node, either the master or a read replica.
 type Node struct {
 	Host     string `json:"host"`
 	Port     string `json:"port"`
@@ -28,12 +28,13 @@ type Node struct {
 	APIKey   string `json:"apiKey"`
 }
 
-// APIResponse is the default api response with a message.
+// APIResponse is the default API message response.
 type APIResponse struct {
 	Message string `json:"message"`
 }
 
-// NewClient configures and returns a new Typesense client.
+// NewClient configures a client using the master node and timeout
+// seconds.
 func NewClient(masterNode *Node, timeoutSeconds int, replicaNodes ...*Node) (*Client, error) {
 	var readReplicas []*Node
 	for _, replica := range replicaNodes {
@@ -55,7 +56,7 @@ func NewClient(masterNode *Node, timeoutSeconds int, replicaNodes ...*Node) (*Cl
 	return &client, nil
 }
 
-// Ping checks if the client has a connection with the typesense instance.
+// Ping checks if the client has a connection with the Typesense API.
 func (c *Client) Ping() error {
 	if ok := c.Health(); !ok {
 		return ErrConnNotReady
@@ -63,7 +64,7 @@ func (c *Client) Ping() error {
 	return nil
 }
 
-// DebugInfo retrieves the debug information from the typesense instance.
+// DebugInfo retrieves the debug information from the Typesense API.
 func (c *Client) DebugInfo() (string, error) {
 	method := http.MethodGet
 	url := fmt.Sprintf("%s://%s:%s/debug", c.masterNode.Protocol, c.masterNode.Host, c.masterNode.Port)
@@ -84,7 +85,7 @@ func (c *Client) DebugInfo() (string, error) {
 	return debug.Version, nil
 }
 
-// Health checks the health information from the typesense instance.
+// Health checks the health information from the Typesense API.
 func (c *Client) Health() bool {
 	method := http.MethodGet
 	url := fmt.Sprintf("%s://%s:%s/health", c.masterNode.Protocol, c.masterNode.Host, c.masterNode.Port)

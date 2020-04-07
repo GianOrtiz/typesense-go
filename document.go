@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 )
 
-// DocumentResponse is the representation of a response
-// that contains the data of a document.
+// DocumentResponse is the response returned with a
+// document. Because the document can't be retrieved
+// immediatyl we wrap the data into this struct so it
+// can be unmarshaled after.
 type DocumentResponse struct {
 	Data  []byte
 	Error error
