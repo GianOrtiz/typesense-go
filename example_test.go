@@ -1,6 +1,8 @@
 package typesense
 
-import "log"
+import (
+	"log"
+)
 
 // Example of an actual program that can connect to the Typesense
 // API creates a new collection, index some document and retrieve
@@ -93,7 +95,7 @@ func Example() {
 	}
 
 	// Searches for the document by title and prints it.
-	search, err := client.Search("book", "The Go Programming Language", "title", nil)
+	search, err := client.Search("books", "The Go Programming Language", "title", nil)
 	if err != nil {
 		log.Printf("couldn't search for books: %v", err)
 	}
