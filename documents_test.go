@@ -222,7 +222,7 @@ func TestSearch_collectionNotFound(t *testing.T) {
 }
 
 func TestSearch_badRequest(t *testing.T) {
-	errorMessage := "missing required field query_by"
+	errorMessage := "QueryBy is a required field"
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: http.StatusBadRequest,

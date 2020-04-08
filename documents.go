@@ -195,15 +195,15 @@ func (c *Client) DeleteDocument(collectionName, documentID string) *DocumentResp
 // Search searches for the query using the queryBy argument
 // and other options in searchOptions in the Typesense API.
 func (c *Client) Search(collectionName, query, queryBy string, searchOptions *SearchOptions) (*SearchResponse, error) {
-	urlEncodedForm := fmt.Sprintf("q=%s&query_by=%s", query, queryBy)
-	var err error
-	if searchOptions != nil {
-		searchOptions.Query = query
-		searchOptions.QueryBy = queryBy
-		urlEncodedForm, err = searchOptions.encodeForm()
-		if err != nil {
-			return nil, err
+	if searchOptions == nil {
+		searchOptions = &SearchOptions{
+			Query:   query,
+			QueryBy: queryBy,
 		}
+	}
+	urlEncodedForm, err := searchOptions.encodeForm()
+	if err != nil {
+		return nil, err
 	}
 
 	method := http.MethodGet
