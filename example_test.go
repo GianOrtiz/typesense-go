@@ -37,36 +37,36 @@ func Example() {
 	booksSchema := CollectionSchema{
 		Name: "books",
 		Fields: []CollectionField{
-			CollectionField{
+			{
 				Name: "title",
 				Type: "string",
 			},
-			CollectionField{
+			{
 				Name: "authors",
 				Type: "string[]",
 			},
-			CollectionField{
+			{
 				Name: "image_url",
 				Type: "string",
 			},
-			CollectionField{
+			{
 				Name: "publication_year",
 				Type: "int32",
 			},
-			CollectionField{
+			{
 				Name: "ratings_count",
 				Type: "int32",
 			},
-			CollectionField{
+			{
 				Name: "average_rating",
 				Type: "int32",
 			},
-			CollectionField{
+			{
 				Name:  "authors_facet",
 				Type:  "string[]",
 				Facet: true,
 			},
-			CollectionField{
+			{
 				Name:  "publication_year_facet",
 				Type:  "string",
 				Facet: true,

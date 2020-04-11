@@ -14,7 +14,7 @@ var (
 	testCollectionSchema = CollectionSchema{
 		Name: "companies",
 		Fields: []CollectionField{
-			CollectionField{
+			{
 				Name: "name",
 				Type: "string",
 			},
