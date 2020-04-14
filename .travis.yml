@@ -1,13 +1,10 @@
 language: go
 
 go:
-  - 1.13
-
-before_install:
-  - go get -t v ./...
+  - 1.14
 
 script:
-  - make test
+  - make unit-tests
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
