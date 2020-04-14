@@ -2,6 +2,11 @@
 
 An unofficial Go client for Typesense HTTP API.
 
+[![GoDoc](https://godoc.org/github.com/GianOrtiz/typesense-go?status.svg)](https://pkg.go.dev/github.com/GianOrtiz/typesense-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/GianOrtiz/typesense-go)](https://goreportcard.com/report/github.com/GianOrtiz/typesense-go)
+[![codecov](https://codecov.io/gh/GianOrtiz/typesense-go/branch/master/graph/badge.svg)](https://codecov.io/gh/GianOrtiz/typesense-go)
+[![Build Status](https://travis-ci.com/GianOrtiz/typesense-go.svg?branch=master)](https://travis-ci.com/GianOrtiz/typesense-go)
+
 ## Installation
 
 To install `typesense-go` using go modules just run the command below:
