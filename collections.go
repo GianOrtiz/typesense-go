@@ -1,7 +1,6 @@
 package typesense
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -45,9 +44,7 @@ func (c *Client) CreateCollection(collectionSchema CollectionSchema) (*Collectio
 		collectionsEndpoint,
 	)
 	collectionJSON, _ := json.Marshal(collectionSchema)
-	req, _ := http.NewRequest(method, url, bytes.NewReader(collectionJSON))
-	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.apiCall(method, url, collectionJSON)
 	if err != nil {
 		return nil, err
 	}
@@ -76,9 +73,7 @@ func (c *Client) RetrieveCollections() ([]*Collection, error) {
 		c.masterNode.Port,
 		collectionsEndpoint,
 	)
-	req, _ := http.NewRequest(method, url, nil)
-	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.apiCall(method, url, nil)
 	if err != nil {
 		return nil, err
 	}

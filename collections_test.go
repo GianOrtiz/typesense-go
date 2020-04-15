@@ -27,6 +27,14 @@ var (
 	}
 )
 
+func TestCollectionField(t *testing.T) {
+	_ = CollectionField{
+		Name:  "test",
+		Type:  "string",
+		Facet: true,
+	}
+}
+
 func TestCreateCollection(t *testing.T) {
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
 		collectionData, _ := json.Marshal(testCollection)

@@ -10,7 +10,7 @@ import (
 // https://typesense.org/docs/0.11.2/guide/ .
 func Example() {
 	// Get a client connection.
-	client, err := NewClient(
+	client := NewClient(
 		&Node{
 			Host:     "localhost",
 			Port:     "8108",
@@ -19,7 +19,7 @@ func Example() {
 		},
 		2,
 	)
-	if err != nil {
+	if err := client.Ping(); err != nil {
 		panic(err)
 	}
 
@@ -91,7 +91,7 @@ func Example() {
 	}
 	documentResponse := client.IndexDocument("books", goProgrammingLanguage)
 	if documentResponse.Error != nil {
-		panic(err)
+		panic(documentResponse.Error)
 	}
 
 	// Searches for the document by title and prints it.

@@ -221,8 +221,34 @@ func TestSearch_collectionNotFound(t *testing.T) {
 	}
 }
 
+func TestSearch_missingRequiredField(t *testing.T) {
+	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
+		return &http.Response{
+			StatusCode: http.StatusBadRequest,
+			Body:       ioutil.NopCloser(strings.NewReader(`{"message": "query_by is required"}`)),
+		}, nil
+	}
+	client := Client{
+		httpClient: mockClient,
+		masterNode: testMasterNode,
+	}
+	if _, err := client.Search("books", "harry potter", "", nil); err != ErrQueryByRequired {
+		t.Errorf("Expected to receive error %v, received %v", ErrQueryByRequired, err)
+	}
+
+	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
+		return &http.Response{
+			StatusCode: http.StatusBadRequest,
+			Body:       ioutil.NopCloser(strings.NewReader(`{"message": "query_by is required"}`)),
+		}, nil
+	}
+	if _, err := client.Search("books", "", "title", nil); err != ErrQueryRequired {
+		t.Errorf("Expected to receive error %v, received %v", ErrQueryRequired, err)
+	}
+}
+
 func TestSearch_badRequest(t *testing.T) {
-	errorMessage := "QueryBy is a required field"
+	errorMessage := "sort_by must be of type number"
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: http.StatusBadRequest,
@@ -233,8 +259,7 @@ func TestSearch_badRequest(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	_, err := client.Search("books", "harry potter", "", nil)
-	if err.Error() != errorMessage {
+	if _, err := client.Search("books", "harry porter", "title", nil); err.Error() != errorMessage {
 		t.Errorf("Expected to receive error %q, received %q", errorMessage, err.Error())
 	}
 }

@@ -13,3 +13,9 @@ view-tests-report: ## View HTML test report on firefox
 	@go tool cover -html=coverage.out -o coverage.html
 	@echo Opening file on firefox...
 	@firefox coverage.html
+
+lint: ## Lint your code
+	./bin/golangci-lint run -v
+
+setup: ## Setup binary packages for application
+	wget -O - -q https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s v1.24.0

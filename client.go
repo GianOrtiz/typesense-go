@@ -1,6 +1,7 @@
 package typesense
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -35,25 +36,15 @@ type APIResponse struct {
 
 // NewClient configures a client using the master node and timeout
 // seconds.
-func NewClient(masterNode *Node, timeoutSeconds int, replicaNodes ...*Node) (*Client, error) {
-	var readReplicas []*Node
-	for _, replica := range replicaNodes {
-		readReplicas = append(readReplicas, replica)
-	}
-
+func NewClient(masterNode *Node, timeoutSeconds int, replicaNodes ...*Node) *Client {
 	client := Client{
 		httpClient: &http.Client{
 			Timeout: time.Duration(time.Second * time.Duration(timeoutSeconds)),
 		},
 		masterNode:       masterNode,
-		readReplicaNodes: readReplicas,
+		readReplicaNodes: replicaNodes,
 	}
-
-	if err := client.Ping(); err != nil {
-		return nil, err
-	}
-
-	return &client, nil
+	return &client
 }
 
 // Ping checks if the client has a connection with the Typesense API.
@@ -68,9 +59,7 @@ func (c *Client) Ping() error {
 func (c *Client) DebugInfo() (string, error) {
 	method := http.MethodGet
 	url := fmt.Sprintf("%s://%s:%s/debug", c.masterNode.Protocol, c.masterNode.Host, c.masterNode.Port)
-	req, _ := http.NewRequest(method, url, nil)
-	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.apiCall(method, url, nil)
 	if err != nil {
 		return "", err
 	}
@@ -89,9 +78,7 @@ func (c *Client) DebugInfo() (string, error) {
 func (c *Client) Health() bool {
 	method := http.MethodGet
 	url := fmt.Sprintf("%s://%s:%s/health", c.masterNode.Protocol, c.masterNode.Host, c.masterNode.Port)
-	req, _ := http.NewRequest(method, url, nil)
-	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.apiCall(method, url, nil)
 	if err != nil {
 		return false
 	}
@@ -104,4 +91,11 @@ func (c *Client) Health() bool {
 		return false
 	}
 	return health.OK
+}
+
+func (c *Client) apiCall(method, url string, body []byte) (*http.Response, error) {
+	req, _ := http.NewRequest(method, url, bytes.NewReader(body))
+	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
+	req.Header.Add("Content-Type", "application/json")
+	return c.httpClient.Do(req)
 }

@@ -21,6 +21,14 @@ var (
 	mockClient = mock.HTTPClient{}
 )
 
+func TestNewClient(t *testing.T) {
+	timeout := 2
+	client := NewClient(testMasterNode, timeout)
+	if client == nil {
+		t.Errorf("Expected to receive a configured client, received <nil>")
+	}
+}
+
 func TestPing_ready(t *testing.T) {
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
 		return &http.Response{

@@ -1,7 +1,6 @@
 package typesense
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -64,13 +63,18 @@ type SearchOptions struct {
 func (opts *SearchOptions) encodeForm() (string, error) {
 	data := url.Values{}
 	if opts.Query == "" {
-		return "", fmt.Errorf("Query is a required field")
+		return "", ErrQueryRequired
 	}
 	data.Set("q", opts.Query)
 	if opts.QueryBy == "" {
-		return "", fmt.Errorf("QueryBy is a required field")
+		return "", ErrQueryByRequired
 	}
 	data.Set("query_by", opts.QueryBy)
+	opts.setOptionalFields(&data)
+	return data.Encode(), nil
+}
+
+func (opts *SearchOptions) setOptionalFields(data *url.Values) {
 	if opts.FilterBy != "" {
 		data.Set("filter_by", opts.FilterBy)
 	}
@@ -101,8 +105,9 @@ func (opts *SearchOptions) encodeForm() (string, error) {
 	if opts.DropTokensThreshold >= 0 {
 		data.Set("drop_tokens_threshold", strconv.Itoa(opts.DropTokensThreshold))
 	}
-	data.Set("prefix", fmt.Sprintf("%v", opts.Prefix))
-	return data.Encode(), nil
+	if opts.Prefix {
+		data.Set("prefix", fmt.Sprintf("%v", opts.Prefix))
+	}
 }
 
 // IndexDocument index a new document in the collection.
@@ -118,9 +123,7 @@ func (c *Client) IndexDocument(collectionName string, document interface{}) *Doc
 		collectionName,
 	)
 	body, _ := json.Marshal(document)
-	req, _ := http.NewRequest(method, url, bytes.NewReader(body))
-	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.apiCall(method, url, body)
 	if err != nil {
 		documentResponse.Error = err
 		return &documentResponse
@@ -147,9 +150,7 @@ func (c *Client) RetrieveDocument(collectionName, documentID string) *DocumentRe
 		collectionName,
 		documentID,
 	)
-	req, _ := http.NewRequest(method, url, nil)
-	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.apiCall(method, url, nil)
 	if err != nil {
 		documentResponse.Error = err
 		return &documentResponse
@@ -176,9 +177,7 @@ func (c *Client) DeleteDocument(collectionName, documentID string) *DocumentResp
 		collectionName,
 		documentID,
 	)
-	req, _ := http.NewRequest(method, url, nil)
-	req.Header.Add(defaultHeaderKey, c.masterNode.APIKey)
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.apiCall(method, url, nil)
 	if err != nil {
 		documentResponse.Error = err
 		return &documentResponse

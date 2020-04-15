@@ -22,7 +22,7 @@ We will show you how to use this package to create a client, create a collection
 Before you can communicate with Typesense you need a client, to create a client you can use the following code:
 
 ```go
-client, err := typesense.NewClient(
+client := typesense.NewClient(
   &typesense.Node{
     Host: "localhost",
     Port: "8108",
@@ -31,7 +31,8 @@ client, err := typesense.NewClient(
   },
   2,
 )
-if err != nil {
+
+if err := client.Ping(); err != nil {
   log.Printf("couldn't connect to typesense: %v", err)
 }
 ```
@@ -39,39 +40,39 @@ if err != nil {
 Now you can define your collection and create it:
 
 ```go
-booksSchema := CollectionSchema{
+booksSchema := typesense.CollectionSchema{
   Name: "books",
-  Fields: []CollectionField{
-    CollectionField{
+  Fields: []typesense.CollectionField{
+    {
       Name: "title",
       Type: "string",
     },
-    CollectionField{
+    {
       Name: "authors",
       Type: "string[]",
     },
-    CollectionField{
+    {
       Name: "image_url",
       Type: "string",
     },
-    CollectionField{
+    {
       Name: "publication_year",
       Type: "int32",
     },
-    CollectionField{
+    {
       Name: "ratings_count",
       Type: "int32",
     },
-    CollectionField{
+    {
       Name: "average_rating",
       Type: "int32",
     },
-    CollectionField{
+    {
       Name: "authors_facet",
       Type: "string[]",
       Facet: true,
     },
-    CollectionField{
+    {
       Name: "publication_year_facet",
       Type: "string",
       Facet: true,
