@@ -50,14 +50,14 @@ type SearchOptions struct {
 	FilterBy            string
 	SortBy              string
 	FacetBy             string
-	MaxFacetValues      int
-	NumTypos            int
+	MaxFacetValues      *int
+	NumTypos            *int
 	Prefix              bool
-	Page                int
-	PerPage             int
+	Page                *int
+	PerPage             *int
 	IncludeFields       string
 	ExcludeFields       string
-	DropTokensThreshold int
+	DropTokensThreshold *int
 }
 
 func (opts *SearchOptions) encodeForm() (string, error) {
@@ -84,17 +84,17 @@ func (opts *SearchOptions) setOptionalFields(data *url.Values) {
 	if opts.FacetBy != "" {
 		data.Set("facet_by", opts.FacetBy)
 	}
-	if opts.MaxFacetValues > 0 {
-		data.Set("max_facet_values", strconv.Itoa(opts.MaxFacetValues))
+	if opts.MaxFacetValues != nil {
+		data.Set("max_facet_values", strconv.Itoa(*opts.MaxFacetValues))
 	}
-	if opts.NumTypos >= 0 {
-		data.Set("num_typos", strconv.Itoa(opts.NumTypos))
+	if opts.NumTypos != nil {
+		data.Set("num_typos", strconv.Itoa(*opts.NumTypos))
 	}
-	if opts.Page >= 0 {
-		data.Set("page", strconv.Itoa(opts.Page))
+	if opts.Page != nil {
+		data.Set("page", strconv.Itoa(*opts.Page))
 	}
-	if opts.PerPage > 0 {
-		data.Set("per_page", strconv.Itoa(opts.PerPage))
+	if opts.PerPage != nil {
+		data.Set("per_page", strconv.Itoa(*opts.PerPage))
 	}
 	if opts.IncludeFields != "" {
 		data.Set("include_fields", opts.IncludeFields)
@@ -102,8 +102,8 @@ func (opts *SearchOptions) setOptionalFields(data *url.Values) {
 	if opts.ExcludeFields != "" {
 		data.Set("exclude_fields", opts.ExcludeFields)
 	}
-	if opts.DropTokensThreshold >= 0 {
-		data.Set("drop_tokens_threshold", strconv.Itoa(opts.DropTokensThreshold))
+	if opts.DropTokensThreshold != nil {
+		data.Set("drop_tokens_threshold", strconv.Itoa(*opts.DropTokensThreshold))
 	}
 	if opts.Prefix {
 		data.Set("prefix", fmt.Sprintf("%v", opts.Prefix))

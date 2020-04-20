@@ -59,20 +59,21 @@ var (
 )
 
 func TestEncodeForm(t *testing.T) {
+	numberValue := 2
 	opts := SearchOptions{
 		Query:               "query",
 		QueryBy:             "name",
 		FilterBy:            "age>3",
 		SortBy:              "age",
 		FacetBy:             "tags",
-		MaxFacetValues:      2,
-		NumTypos:            2,
+		MaxFacetValues:      &numberValue,
+		NumTypos:            &numberValue,
 		Prefix:              true,
-		Page:                1,
-		PerPage:             5,
+		Page:                &numberValue,
+		PerPage:             &numberValue,
 		IncludeFields:       "name",
 		ExcludeFields:       "full_name",
-		DropTokensThreshold: 5,
+		DropTokensThreshold: &numberValue,
 	}
 	if _, err := opts.encodeForm(); err != nil {
 		t.Errorf("Expected no errors, received %v", err)
