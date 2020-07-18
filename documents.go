@@ -223,7 +223,7 @@ func (c *Client) Search(collectionName, query, queryBy string, searchOptions *Se
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == 404 {
-		return nil, ErrCollectionNotFound
+		return nil, ErrNotFound
 	}
 	if resp.StatusCode == 400 {
 		var apiResponse APIResponse

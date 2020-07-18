@@ -83,6 +83,9 @@ func (c *Client) Health() bool {
 		return false
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusServiceUnavailable {
+		return false
+	}
 	type healthResponse struct {
 		OK bool `json:"ok"`
 	}

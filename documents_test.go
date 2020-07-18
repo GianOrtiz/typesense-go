@@ -205,11 +205,11 @@ func TestSearch(t *testing.T) {
 	}
 }
 
-func TestSearch_collectionNotFound(t *testing.T) {
+func TestSearch_notFound(t *testing.T) {
 	mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: http.StatusNotFound,
-			Body:       ioutil.NopCloser(strings.NewReader(`{"message": "collection not found"}`)),
+			Body:       ioutil.NopCloser(strings.NewReader(`{"message": "no resource found"}`)),
 		}, nil
 	}
 	client := Client{
@@ -217,8 +217,8 @@ func TestSearch_collectionNotFound(t *testing.T) {
 		masterNode: testMasterNode,
 	}
 	_, err := client.Search("books", "harry potter", "title", nil)
-	if err != ErrCollectionNotFound {
-		t.Errorf("Expected to receive error %v, received %v", ErrCollectionNotFound, err)
+	if err != ErrNotFound {
+		t.Errorf("Expected to receive error %v, received %v", ErrNotFound, err)
 	}
 }
 

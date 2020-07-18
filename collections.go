@@ -35,6 +35,11 @@ type CollectionField struct {
 // CreateCollection creates a new collection using the
 // given collection schema.
 func (c *Client) CreateCollection(collectionSchema CollectionSchema) (*Collection, error) {
+	if collectionSchema.Name == "" {
+		return nil, ErrCollectionNameRequired
+	} else if len(collectionSchema.Fields) == 0 {
+		return nil, ErrCollectionFieldsRequired
+	}
 	method := http.MethodPost
 	url := fmt.Sprintf(
 		"%s://%s:%s/%s",
@@ -49,7 +54,9 @@ func (c *Client) CreateCollection(collectionSchema CollectionSchema) (*Collectio
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == http.StatusConflict || resp.StatusCode == http.StatusBadRequest {
+	if resp.StatusCode == http.StatusConflict {
+		return nil, ErrCollectionDuplicate
+	} else if resp.StatusCode == http.StatusBadRequest {
 		var apiResponse APIResponse
 		if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 			return nil, err
@@ -83,4 +90,57 @@ func (c *Client) RetrieveCollections() ([]*Collection, error) {
 		return nil, err
 	}
 	return collections, nil
+}
+
+// RetrieveCollection retrieves a single collection by
+// its name.
+func (c *Client) RetrieveCollection(collectionName string) (*Collection, error) {
+	method := http.MethodGet
+	url := fmt.Sprintf(
+		"%s://%s:%s/%s/%s",
+		c.masterNode.Protocol,
+		c.masterNode.Host,
+		c.masterNode.Port,
+		collectionsEndpoint,
+		collectionName,
+	)
+	resp, err := c.apiCall(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, ErrCollectionNotFound
+	}
+	var collection Collection
+	if err := json.NewDecoder(resp.Body).Decode(&collection); err != nil {
+		return nil, err
+	}
+	return &collection, nil
+}
+
+// DeleteCollection deletes a collection by its name.
+func (c *Client) DeleteCollection(collectionName string) (*Collection, error) {
+	method := http.MethodDelete
+	url := fmt.Sprintf(
+		"%s://%s:%s/%s/%s",
+		c.masterNode.Protocol,
+		c.masterNode.Host,
+		c.masterNode.Port,
+		collectionsEndpoint,
+		collectionName,
+	)
+	resp, err := c.apiCall(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, ErrCollectionNotFound
+	}
+	var collection Collection
+	if err := json.NewDecoder(resp.Body).Decode(&collection); err != nil {
+		return nil, err
+	}
+	return &collection, nil
 }
