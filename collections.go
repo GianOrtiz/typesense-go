@@ -56,6 +56,8 @@ func (c *Client) CreateCollection(collectionSchema CollectionSchema) (*Collectio
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusConflict {
 		return nil, ErrCollectionDuplicate
+	} else if resp.StatusCode == http.StatusUnauthorized {
+		return nil, ErrUnauthorized
 	} else if resp.StatusCode == http.StatusBadRequest {
 		var apiResponse APIResponse
 		if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
@@ -85,6 +87,9 @@ func (c *Client) RetrieveCollections() ([]*Collection, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusUnauthorized {
+		return nil, ErrUnauthorized
+	}
 	var collections []*Collection
 	if err := json.NewDecoder(resp.Body).Decode(&collections); err != nil {
 		return nil, err
@@ -111,6 +116,8 @@ func (c *Client) RetrieveCollection(collectionName string) (*Collection, error) 
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, ErrCollectionNotFound
+	} else if resp.StatusCode == http.StatusUnauthorized {
+		return nil, ErrUnauthorized
 	}
 	var collection Collection
 	if err := json.NewDecoder(resp.Body).Decode(&collection); err != nil {
@@ -137,6 +144,8 @@ func (c *Client) DeleteCollection(collectionName string) (*Collection, error) {
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, ErrCollectionNotFound
+	} else if resp.StatusCode == http.StatusUnauthorized {
+		return nil, ErrUnauthorized
 	}
 	var collection Collection
 	if err := json.NewDecoder(resp.Body).Decode(&collection); err != nil {

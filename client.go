@@ -23,10 +23,17 @@ type Client struct {
 
 // Node is a Typesense node, either the master or a read replica.
 type Node struct {
-	Host     string `json:"host"`
-	Port     string `json:"port"`
+	// Host is the address of your Typesense host.
+	Host string `json:"host"`
+
+	// Port is the port Typesense is running on.
+	Port string `json:"port"`
+
+	// Protocol is the protocol Typesense is using(http, https)
 	Protocol string `json:"protocol"`
-	APIKey   string `json:"apiKey"`
+
+	// APIKey is the Typesense API Key that will be set in X-Typesense-API-Key header.
+	APIKey string `json:"apiKey"`
 }
 
 // APIResponse is the default API message response.

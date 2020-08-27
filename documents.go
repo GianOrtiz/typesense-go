@@ -129,8 +129,14 @@ func (c *Client) IndexDocument(collectionName string, document interface{}) *Doc
 		return &documentResponse
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == 404 {
+	if resp.StatusCode == http.StatusNotFound {
 		documentResponse.Error = ErrCollectionNotFound
+		return &documentResponse
+	} else if resp.StatusCode == http.StatusUnauthorized {
+		documentResponse.Error = ErrUnauthorized
+		return &documentResponse
+	} else if resp.StatusCode == http.StatusConflict {
+		documentResponse.Error = ErrDuplicateID
 		return &documentResponse
 	}
 	documentResponse.Data, documentResponse.Error = ioutil.ReadAll(resp.Body)
@@ -156,8 +162,11 @@ func (c *Client) RetrieveDocument(collectionName, documentID string) *DocumentRe
 		return &documentResponse
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == 404 {
+	if resp.StatusCode == http.StatusNotFound {
 		documentResponse.Error = ErrCollectionNotFound
+		return &documentResponse
+	} else if resp.StatusCode == http.StatusUnauthorized {
+		documentResponse.Error = ErrUnauthorized
 		return &documentResponse
 	}
 	documentResponse.Data, documentResponse.Error = ioutil.ReadAll(resp.Body)
@@ -183,8 +192,11 @@ func (c *Client) DeleteDocument(collectionName, documentID string) *DocumentResp
 		return &documentResponse
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == 404 {
+	if resp.StatusCode == http.StatusNotFound {
 		documentResponse.Error = ErrCollectionNotFound
+		return &documentResponse
+	} else if resp.StatusCode == http.StatusUnauthorized {
+		documentResponse.Error = ErrUnauthorized
 		return &documentResponse
 	}
 	documentResponse.Data, documentResponse.Error = ioutil.ReadAll(resp.Body)
@@ -222,10 +234,11 @@ func (c *Client) Search(collectionName, query, queryBy string, searchOptions *Se
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == 404 {
+	if resp.StatusCode == http.StatusNotFound {
 		return nil, ErrNotFound
-	}
-	if resp.StatusCode == 400 {
+	} else if resp.StatusCode == http.StatusUnauthorized {
+		return nil, ErrUnauthorized
+	} else if resp.StatusCode == http.StatusBadRequest {
 		var apiResponse APIResponse
 		if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 			return nil, err
