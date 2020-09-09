@@ -138,6 +138,13 @@ func (c *Client) IndexDocument(collectionName string, document interface{}) *Doc
 	} else if resp.StatusCode == http.StatusConflict {
 		documentResponse.Error = ErrDuplicateID
 		return &documentResponse
+	} else if resp.StatusCode == http.StatusBadRequest {
+		var apiErr APIError
+		if err := json.NewDecoder(resp.Body).Decode(&apiErr); err != nil {
+			apiErr.Message = "status bad request"
+		}
+		documentResponse.Error = apiErr
+		return &documentResponse
 	}
 	documentResponse.Data, documentResponse.Error = ioutil.ReadAll(resp.Body)
 	return &documentResponse

@@ -37,3 +37,13 @@ var ErrUnauthorized = errors.New("the api key does not match the Typesense api k
 // ErrDuplicateID returned when the document the user is trying to index has an id that is already
 // in the collection.
 var ErrDuplicateID = errors.New("the document you are trying to index has an id that already exists in the collection")
+
+// APIError is an error returned from the API.
+type APIError struct {
+	Message string `json:"string"`
+}
+
+// Error returns a string representation of the error.
+func (e APIError) Error() string {
+	return e.Message
+}
