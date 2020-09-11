@@ -8,6 +8,9 @@ unit-tests: ## Run unit tests
 	go test -race ./...
 	go test -v -coverprofile=coverage.out ./...
 
+integration-tests: ## Run integration tests
+	go test -v ./... -tags=integration
+
 view-tests-report: ## View HTML test report on firefox
 	@echo Generating HTML report...
 	@go tool cover -html=coverage.out -o coverage.html
@@ -18,4 +21,4 @@ lint: ## Lint your code
 	./bin/golangci-lint run -v
 
 setup: ## Setup binary packages for application
-	wget -O - -q https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s v1.24.0
+	wget -O - -q https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s v1.30.0

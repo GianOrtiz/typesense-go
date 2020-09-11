@@ -1,5 +1,8 @@
 language: go
 
+services:
+  - docker
+
 go:
   - 1.14
 
@@ -9,6 +12,7 @@ before_script:
 script:
   - make lint
   - make unit-tests
+  - make integration-tests
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
