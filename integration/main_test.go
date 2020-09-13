@@ -158,7 +158,7 @@ func TestRetrieveDocument(t *testing.T) {
 }
 
 func TestSearchDocument(t *testing.T) {
-	searchRes, err := testClient.Search(testCollection.Name, strTestValue, strFieldName, nil)
+	searchRes, err := testClient.Search(testCollection.Name, strTestValue, []string{strFieldName}, nil)
 	assert.Equal(t, nil, err)
 	if err == nil {
 		assert.Equal(t, 1, searchRes.Found)

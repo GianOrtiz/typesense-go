@@ -60,19 +60,20 @@ var (
 
 func TestEncodeForm(t *testing.T) {
 	numberValue := 2
+	prefix := true
 	opts := SearchOptions{
 		Query:               "query",
-		QueryBy:             "name",
-		FilterBy:            "age>3",
-		SortBy:              "age",
-		FacetBy:             "tags",
+		QueryBy:             []string{"name"},
+		FilterBy:            []string{"age>3"},
+		SortBy:              []string{"age"},
+		FacetBy:             []string{"tags"},
 		MaxFacetValues:      &numberValue,
 		NumTypos:            &numberValue,
-		Prefix:              true,
+		Prefix:              &prefix,
 		Page:                &numberValue,
 		PerPage:             &numberValue,
-		IncludeFields:       "name",
-		ExcludeFields:       "full_name",
+		IncludeFields:       []string{"name"},
+		ExcludeFields:       []string{"full_name"},
 		DropTokensThreshold: &numberValue,
 	}
 	if _, err := opts.encodeForm(); err != nil {
@@ -196,7 +197,7 @@ func TestSearch(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	searchResp, err := client.Search("books", "harry potter", "title", nil)
+	searchResp, err := client.Search("books", "harry potter", []string{"title"}, nil)
 	if err != nil {
 		t.Errorf("Expected to receive no errors, received %v", err)
 	}
@@ -216,7 +217,7 @@ func TestSearch_notFound(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	_, err := client.Search("books", "harry potter", "title", nil)
+	_, err := client.Search("books", "harry potter", []string{"title"}, nil)
 	if err != ErrNotFound {
 		t.Errorf("Expected to receive error %v, received %v", ErrNotFound, err)
 	}
@@ -233,7 +234,7 @@ func TestSearch_missingRequiredField(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	if _, err := client.Search("books", "harry potter", "", nil); err != ErrQueryByRequired {
+	if _, err := client.Search("books", "harry potter", nil, nil); err != ErrQueryByRequired {
 		t.Errorf("Expected to receive error %v, received %v", ErrQueryByRequired, err)
 	}
 
@@ -243,7 +244,7 @@ func TestSearch_missingRequiredField(t *testing.T) {
 			Body:       ioutil.NopCloser(strings.NewReader(`{"message": "query_by is required"}`)),
 		}, nil
 	}
-	if _, err := client.Search("books", "", "title", nil); err != ErrQueryRequired {
+	if _, err := client.Search("books", "", []string{"title"}, nil); err != ErrQueryRequired {
 		t.Errorf("Expected to receive error %v, received %v", ErrQueryRequired, err)
 	}
 }
@@ -260,7 +261,7 @@ func TestSearch_badRequest(t *testing.T) {
 		httpClient: mockClient,
 		masterNode: testMasterNode,
 	}
-	if _, err := client.Search("books", "harry porter", "title", nil); err.Error() != errorMessage {
+	if _, err := client.Search("books", "harry porter", []string{"title"}, nil); err.Error() != errorMessage {
 		t.Errorf("Expected to receive error %q, received %q", errorMessage, err.Error())
 	}
 }

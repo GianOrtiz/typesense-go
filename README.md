@@ -123,7 +123,7 @@ if documentResponse.Error != nil {
 Now that we have a collection and a book document in the collection we can search for the book:
 
 ```go
-search, err := client.Search("books", "The Go Programming Language", "title", nil)
+search, err := client.Search("books", "The Go Programming Language", []string{"title"}, nil)
 if err != nil {
   log.Printf("couldn't search for books: %v", err)
 }
