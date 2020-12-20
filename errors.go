@@ -40,7 +40,7 @@ var ErrDuplicateID = errors.New("the document you are trying to index has an id 
 
 // APIError is an error returned from the API.
 type APIError struct {
-	Message string `json:"string"`
+	Message string `json:"message"`
 }
 
 // Error returns a string representation of the error.
