@@ -178,6 +178,27 @@ func TestDeleteDocument(t *testing.T) {
 	assert.Equal(t, testDocument, returnDocument)
 }
 
+func TestAPIKey(t *testing.T) {
+	createKey := typesense.APIKey{
+		Actions:     []string{typesense.ActionAll},
+		Collections: []string{testCollection.Name},
+		Description: "A new API key",
+	}
+	apiKey, err := testClient.CreateAPIKey(createKey)
+	assert.Equal(t, nil, err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	key, err := testClient.GetAPIKey(apiKey.ID)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, apiKey.ID, key.ID)
+	keys, err := testClient.GetAPIKeys()
+	assert.Equal(t, nil, err)
+	assert.Greater(t, len(keys), 0)
+	err = testClient.DeleteAPIKey(apiKey.ID)
+	assert.Equal(t, nil, err)
+}
+
 func TestDeleteCollection(t *testing.T) {
 	c, err := testClient.DeleteCollection(testCollection.Name)
 	assert.Equal(t, nil, err)
