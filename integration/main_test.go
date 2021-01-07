@@ -49,6 +49,11 @@ var (
 		strFieldName:   strTestValue,
 		floatFieldName: floatTestValue,
 	}
+
+	testAlias = typesense.Alias{
+		Name:           "alias",
+		CollectionName: testCollection.Name,
+	}
 )
 
 func TestMain(m *testing.M) {
@@ -196,6 +201,33 @@ func TestAPIKey(t *testing.T) {
 	assert.Equal(t, nil, err)
 	assert.Greater(t, len(keys), 0)
 	err = testClient.DeleteAPIKey(apiKey.ID)
+	assert.Equal(t, nil, err)
+}
+
+func TestCreateAlias(t *testing.T) {
+	_, err := testClient.CreateAlias(
+		testAlias.Name,
+		&testAlias,
+	)
+	assert.Equal(t, nil, err)
+}
+
+func TestRetrieveAlias(t *testing.T) {
+	a, err := testClient.RetrieveAlias(testAlias.Name)
+	assert.Equal(t, nil, err)
+	if a != nil {
+		assert.Equal(t, *a, testAlias)
+	}
+}
+
+func TestRetrieveAliases(t *testing.T) {
+	as, err := testClient.RetrieveAliases()
+	assert.Equal(t, nil, err)
+	assert.GreaterOrEqual(t, len(as), 0)
+}
+
+func TestDeleteAlias(t *testing.T) {
+	_, err := testClient.DeleteAlias(testAlias.Name)
 	assert.Equal(t, nil, err)
 }
 

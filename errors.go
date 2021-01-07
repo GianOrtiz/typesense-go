@@ -1,6 +1,9 @@
 package typesense
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // ErrConnNotReady is the error that alerts that the connection with the Typesense API
 // could not be established, it can be because of a connection  timeout, a unauthorized
@@ -37,6 +40,21 @@ var ErrUnauthorized = errors.New("the api key does not match the Typesense api k
 // ErrDuplicateID returned when the document the user is trying to index has an id that is already
 // in the collection.
 var ErrDuplicateID = errors.New("the document you are trying to index has an id that already exists in the collection")
+
+// HTTPError returns an error when an unexpected response status code is
+// received.
+type HTTPError struct {
+	Status       int    `json:"status"`
+	ResponseBody []byte `json:"body"`
+}
+
+func (e HTTPError) Error() string {
+	return fmt.Sprintf(
+		"unexpected response status code %v. Response body contents %s",
+		e.Status,
+		string(e.ResponseBody),
+	)
+}
 
 // APIError is an error returned from the API.
 type APIError struct {
