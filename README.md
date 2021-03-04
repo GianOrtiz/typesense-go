@@ -1,3 +1,5 @@
+# REPOSITORY UNMAINTAINED. USE [TYPESENSE PACKAGE](https://github.com/typesense/typesense-go) INSTEAD.
+
 # Typesense Go
 
 An unofficial Go client for Typesense HTTP API.
